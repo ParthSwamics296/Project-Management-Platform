@@ -5,7 +5,7 @@ export interface AccountDocument extends Document {
   provider: ProviderEnumType;
   providerId: string; // Store the email, googleId, facebookId as the providerId
   userId: mongoose.Types.ObjectId;
-  refreshToken: string | null;
+  refreshToken?: string | null;
   tokenExpiry: Date | null;
   createdAt: Date;
 }
@@ -34,7 +34,7 @@ const accountSchema = new Schema<AccountDocument>(
     timestamps: true,
     toJSON: {
       transform(doc, ret) {
-        delete ret.refreshToken;
+        delete  ret.refreshToken;
       },
     },
   }
