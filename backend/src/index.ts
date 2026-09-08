@@ -23,23 +23,7 @@ import taskRoutes from "./routes/task.route";
 const app = express();
 const BASE_PATH = config.BASE_PATH;
 
-app.use(express.json());
-
-app.use(express.urlencoded({ extended: true }));
-
-app.use(
-  session({
-    name: "session",
-    keys: [config.SESSION_SECRET],
-    maxAge: 24 * 60 * 60 * 1000,
-    secure: config.NODE_ENV === "production",
-    httpOnly: true,
-    sameSite: "lax",
-  })
-);
-
-app.use(passport.initialize());
-app.use(passport.session());
+app.set("trust proxy", 1);
 
 app.use(
   cors({
@@ -48,15 +32,30 @@ app.use(
   })
 );
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+const isProduction = config.NODE_ENV === "production";
+
+app.use(
+  session({
+    name: "session",
+    keys: [config.SESSION_SECRET],
+    maxAge: 24 * 60 * 60 * 1000,
+    secure: isProduction,
+    httpOnly: true,
+    sameSite: isProduction ? "none" : "lax", 
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.get(
   `/`,
   asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-    throw new BadRequestException(
-      "This is a bad request",
-      ErrorCodeEnum.AUTH_INVALID_TOKEN
-    );
     return res.status(HTTPSTATUS.OK).json({
-      message: "Hello Subscribe to the channel & share",
+      message: "Server is up and running",
     });
   })
 );
