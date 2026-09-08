@@ -8,6 +8,10 @@ import passport from "passport";
 
 export const googleLoginCallback = asyncHandler(
   async (req: Request, res: Response) => {
+
+    console.log("GOOGLE CALLBACK USER:", req.user);
+    console.log("CURRENT WORKSPACE:", req.user?.currentWorkspace);
+
     const currentWorkspace = req.user?.currentWorkspace;
 
     if (!currentWorkspace) {
